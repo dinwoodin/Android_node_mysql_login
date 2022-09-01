@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10sp"
+    android:id="@+id/itme"
     >
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/image"
@@ -26,6 +27,13 @@
         android:layout_toRightOf="@id/image"
         android:textSize="20sp"
         android:layout_below="@id/id"/>
-
+    <CheckBox
+        android:id="@+id/chk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10sp"
+        android:padding="10dp"
+        />
 
 </RelativeLayout>
