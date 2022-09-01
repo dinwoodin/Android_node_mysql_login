@@ -1,26 +1,25 @@
-package com.example.ex11;
+package com.example.ex12;
 
-import static com.example.ex11.RemoteService.BASE_URL;
+import static com.example.ex12.RemoteService.BASE_URL;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,17 +38,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getSupportActionBar().setTitle("사용자목록");
-        RecyclerView list=findViewById(R.id.list);
-        list.setLayoutManager(new LinearLayoutManager(this));
-        list.setAdapter(userAdapter);
+        getSupportActionBar().setTitle("사용자관리");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_baseline_icecream_24);
 
         //node mysql과 연결하는것
         retrofit=new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
         service=retrofit.create(RemoteService.class);
+        onRestart();
+        RecyclerView list= findViewById(R.id.list);
+        list.setLayoutManager(new LinearLayoutManager(this));
+        list.setAdapter(userAdapter);
 
-        //데이터불러오기
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
         Call<List<UserVO>> call=service.list();
+
         call.enqueue(new Callback<List<UserVO>>() {
             @Override
             public void onResponse(Call<List<UserVO>> call, Response<List<UserVO>> response) {
@@ -59,19 +66,11 @@ public class MainActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<List<UserVO>> call, Throwable t) {
-                System.out.println("......1111오류..."+t.toString());
+                System.out.println("오류:......................."+t.toString());
             }
         });
-        FloatingActionButton add=findViewById(R.id.insert);
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(MainActivity.this,InsertActivity2.class);
-                startActivity(intent);
-            }
-        });
-
     }
+    //어댑터 정의
     class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
 
         @NonNull
@@ -88,11 +87,12 @@ public class MainActivity extends AppCompatActivity {
             holder.id.setText(vo.getId());
             holder.name.setText(vo.getName());
             String image=vo.getImage();
-            if(image!=null){
+            if(image != null){
                 Picasso.with(MainActivity.this).load(BASE_URL+image).into(holder.image);
             }else {
-                holder.image.setImageResource(R.drawable.ic_baseline_add_24);
+                holder.image.setImageResource(R.drawable.ic_fl);
             }
+
         }
 
         @Override
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
-            CircleImageView image;
+            ImageView image;
             TextView id,name;
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -111,27 +111,5 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Toast.makeText(this,"onRestart",Toast.LENGTH_SHORT).show();
-        Call<List<UserVO>> call=service.list();
-
-        call.enqueue(new Callback<List<UserVO>>() {
-            @Override
-            public void onResponse(Call<List<UserVO>> call, Response<List<UserVO>> response) {
-                array=response.body();
-                System.out.println("......"+array.size());
-                userAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onFailure(Call<List<UserVO>> call, Throwable t) {
-                System.out.println("......1111오류..."+t.toString());
-
-            }
-        });
     }
 }
