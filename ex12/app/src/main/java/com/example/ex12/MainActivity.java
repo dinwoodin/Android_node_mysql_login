@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     List<UserVO> array=new ArrayList<>();
     UserAdapter userAdapter=new UserAdapter();
     ArrayList<String> arrayDelete=new ArrayList<>();
-    boolean isDons=false;
+ 
 
 
     @Override
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onResponse(Call<Void> call, Response<Void> response) {
                                         onRestart();
-                                        isDons=true;
+
                                     }
 
                                     @Override
@@ -187,9 +187,9 @@ public class MainActivity extends AppCompatActivity {
 //                    System.out.println(",......"+arrayDelete.size());
                 }
             });
-            if(isDons){
+
                 holder.chk.setChecked(false);
-            }
+
         }
 
         @Override
